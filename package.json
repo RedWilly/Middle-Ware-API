@@ -1,0 +1,15 @@
+{
+  "name": "nxscdn",
+  "version": "1.0.0",
+  "description": "Image and metadata service for Nxs.Exchange",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Leander Vink",
+  "license": "ISC",
+  "dependencies": {
+    "ethers": "^6.11.1",
+    "express": "^4.18.2"
+  }
+}

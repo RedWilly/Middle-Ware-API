@@ -21,6 +21,37 @@ const retrieveValidatedInput = function (request) {
     }
 }
 
+const getName = async function (chain, collection) {
+    const nameFilePath = `./name/${chain}/name.json`;
+    let nameCache = {};
+
+    // Attempt to read the cache file if it exists
+    if (fs.existsSync(nameFilePath)) {
+        nameCache = JSON.parse(fs.readFileSync(nameFilePath, { encoding: 'utf-8' }));
+        // If the collection name is already cached, return it
+        if (nameCache[collection]) {
+            console.log(`Collection name retrieved from cache: ${nameCache[collection]}`);
+            return nameCache[collection];
+        }
+    }
+
+    // If the name is not in the cache, fetch it from the blockchain
+    const contract = await getContract(chain, collection);
+    const collectionName = await contract.name();
+
+    // Update the cache with the new collection name
+    nameCache[collection] = collectionName;
+
+    // Make directories recursively if required
+    if (!fs.existsSync(path.dirname(nameFilePath))) {
+        fs.mkdirSync(path.dirname(nameFilePath), { recursive: true });
+    }
+
+    fs.writeFileSync(nameFilePath, JSON.stringify(nameCache, null, 2));
+    return collectionName;
+}
+
+
 const getProvider = async function (chain) {
     switch (chain) {
         case 168587773:
@@ -163,6 +194,29 @@ const main = function () {
             }))
         }
     })
+
+    app.get('/name/:chain/:collection/', async (request, response) => {
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        try {
+            const chain = parseInt(request.params.chain);
+            const collection = request.params.collection;
+
+            if (!ethers.isAddress(collection)) {
+                throw `Invalid collection address`;
+            }
+
+            const name = await getName(chain, collection);
+            response.send(JSON.stringify({
+                'name': name
+            }));
+        } catch (e) {
+            console.log(e);
+            response.setHeader('Content-Type', 'application/json');
+            response.status(500).send(JSON.stringify({
+                'error': 'Unable to retrieve collection name'
+            }));
+        }
+    });
 
     app.listen(9001, () => {
         console.log('CDN server started.')

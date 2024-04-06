@@ -54,8 +54,8 @@ const getName = async function (chain, collection) {
 
 const getProvider = async function (chain) {
     switch (chain) {
-        case 168587773:
-            return new ethers.JsonRpcProvider('https://sepolia.blast.io', 168587773)
+        case 199:
+            return new ethers.JsonRpcProvider('https://bittorrent.drpc.org', 199)
             break
         default:
             throw `Chain ID ${chain} is not supported`

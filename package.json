@@ -4,6 +4,7 @@
   "description": "Image and metadata service for Nxs.Exchange",
   "main": "src/index.js",
   "scripts": {
+    "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Leander Vink",

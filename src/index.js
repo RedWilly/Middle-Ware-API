@@ -113,6 +113,16 @@ const main = function () {
 
     const app = express()
 
+     // Add a health check endpoint
+   app.get('/health', (req, res) => {
+     res.status(200).json({ status: 'OK' });
+   });
+
+   // Update your main route to return a 200 status
+   app.get('/', (req, res) => {
+     res.status(200).json({ message: 'Server is running' });
+   });
+
     app.get('/owner/:chain/:collection/:id', async (request, response) => {
         response.setHeader('Access-Control-Allow-Origin', '*')
         try {
